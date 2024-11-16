@@ -1,0 +1,19 @@
+Basic
+
+
+
+
+
+## Running Http Server And Tests
+Run Permission Scripts
+    chmod +x ./scripts/runserver.sh
+    chmod +x ./scripts/runtests.sh
+
+Run Task
+    "Run Http Server"
+    "Run Tests"
+
+
+
+
+
