@@ -5,6 +5,10 @@
 
 #include <arpa/inet.h>
 #include <netdb.h>
+#define MAX_REQUEST 5012
+#define PATH_LEN 256
+#define HOST_LEN 128
+#define METHOD_LEN 10
 
 // Log error message in console
 void error(const char *msg);
@@ -18,11 +22,11 @@ void close_proxy(int sig);
 // parse the request to get the host and path
 int parse_http_request(char *request, char *method, char *host, char *path);
 
-// parse the response to get the status and content
-int parse_response(char *buffer, char *status, char *buff);
-
 // Send the request to the server and get the response
-void send_request(int client_sock, char *host, char *path);
+int send_request(int client_sock, char *host, char *path);
 
-// Send the response to the client
-void send_response(int client_sock, char *status, char *content);
+// Control flow to receive and send data to client
+void handle_client(int client_sock);
+
+// Write to client socket
+void write_to_client_socket(int client_sock, char *buff);
