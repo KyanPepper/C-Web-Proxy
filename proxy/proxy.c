@@ -13,6 +13,33 @@ void close_proxy(int sig)
     printf("Stopping Server: \n");
 }
 
+int parse_http_request(char *request, char *method, char *host, char *path)
+{
+    // Parse the request to get the host and path
+    int good = sscanf(request, "%s http://%127[^/]%255s", method, host, path);
+    // only GET method is supported
+    if (strlen(path) == 0)
+    {
+        strcpy(path, "/");
+    }
+
+    //bad format 401
+    if (good != 3)
+    {
+        error("Error parsing request");
+        return -1;
+    }
+
+
+    if (strcmp(method, "GET") != 0)
+    {
+        error("Only GET method is supported");
+        return -1;
+    }
+    
+    return 0;
+}
+
 void proxy(int port)
 {
 
@@ -46,7 +73,7 @@ void proxy(int port)
     // Accept incoming connections
     struct sockaddr_in cli_addr;
     socklen_t clilen = sizeof(cli_addr);
-    int newsockfd = accept(sockfd, (struct sockaddr *)&cli_addr, &clilen); //control flow blocked here (no async await)
+    int newsockfd = accept(sockfd, (struct sockaddr *)&cli_addr, &clilen); // control flow blocked here (no async await)
 
     if (newsockfd < 0)
     {
@@ -55,7 +82,6 @@ void proxy(int port)
 
     while (stop == 1)
     {
-
     }
     // Close the sockets
     close(newsockfd);
