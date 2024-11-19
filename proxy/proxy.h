@@ -6,14 +6,13 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 
-
-
-
-
-// Function prototypes
+// Log error message in console
 void error(const char *msg);
+
+// Create Socket and bind to a port and listen for incoming connections
 void proxy(int port);
-void connectToServer(int clientSocket, char *host, int port);
-void connectToClient(int serverSocket, int clientSocket);
 
+// Close the proxy server
+void close_proxy(int sig);
 
+void parse_request(char *buffer, char *host, char *path);

@@ -1,5 +1,6 @@
 #include "proxy.h"
 
+
 int main(int argc, char *argv[])
 {
     // Check usage
@@ -11,8 +12,13 @@ int main(int argc, char *argv[])
 
     // Get port
     int port = atoi(argv[1]);
+    if (port < 1024 || port > 65535)
+    {
+        printf("Port number must be between 1024 and 65535\n");
+        exit(1);
+    }
 
-    // Run proxy
+    // Start the proxy server
     proxy(port);
 
     return 0;

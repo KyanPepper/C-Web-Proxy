@@ -1,9 +1,7 @@
 {
-    
-    "editor.formatOnSave": true,
-    "cSpell.words": [
-        "runserver",
-        "runtests"
-    ],
+  "editor.formatOnSave": true,
+  "cSpell.words": ["runserver", "runtests"],
+  "files.associations": {
+    "proxy.h": "c"
+  }
 }
-
