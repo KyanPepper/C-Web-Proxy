@@ -1,4 +1,10 @@
 #include "proxy.h"
+// Example http request (this is not a comment but for me to remember the format)
+// HTTP/1.0 200 OK\r\n
+// Content-Type: text/html\r\n
+// \r\n
+// <html><body>Hello, world!</body></html>
+
 volatile sig_atomic_t stop = 1;
 
 void error(const char *msg)
@@ -23,20 +29,42 @@ int parse_http_request(char *request, char *method, char *host, char *path)
         strcpy(path, "/");
     }
 
-    //bad format 401
+    // bad format 401
     if (good != 3)
     {
         error("Error parsing request");
         return -1;
     }
 
-
     if (strcmp(method, "GET") != 0)
     {
         error("Only GET method is supported");
         return -1;
     }
-    
+
+    return 0;
+}
+
+int parse_http_response(char *response, char *status, char *buff)
+{
+    // Parse the response to get the status and content
+    sscanf(response, "HTTP/1.0 %s", status);
+
+    // Find the start of the content
+    char *content_start = strstr(response, "\r\n\r\n");
+    if (content_start == NULL)
+    {
+        error("Error parsing response");
+        return -1;
+    }
+    content_start += 4;                       // skip special char
+    if (sizeof(buff) < strlen(content_start)) // assuming char is 1 byte
+    {
+        error("Content too large"); // buffer overflow
+        return -1;
+    }
+
+    strcpy(buff, content_start);
     return 0;
 }
 

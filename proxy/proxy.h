@@ -15,17 +15,14 @@ void proxy(int port);
 // Close the proxy server
 void close_proxy(int sig);
 
-//parse the request to get the host and path
-void parse_request(char *buffer, char *host, char *path);
+// parse the request to get the host and path
+int parse_http_request(char *request, char *method, char *host, char *path);
 
-void parse_response(char *buffer, char *status, char *content);
+// parse the response to get the status and content
+int parse_response(char *buffer, char *status, char *buff);
 
 // Send the request to the server and get the response
 void send_request(int client_sock, char *host, char *path);
 
 // Send the response to the client
 void send_response(int client_sock, char *status, char *content);
-
-
-
-
