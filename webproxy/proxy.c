@@ -23,7 +23,14 @@ void error(const char *msg)
 
 void error_on_client(const char *msg, int client_sock)
 {
+    int newMessageSize = strlen(msg) + 50;
+    char newMessage[newMessageSize];
+    strcpy(newMessage, msg);
+    snprintf(newMessage + strlen(newMessage), newMessageSize - strlen(newMessage),
+             " error on client socket %d", client_sock);
+
     error(msg);
+    write(client_sock, "HTTP/1.0 400 Bad Request\r\n", 25);
     close(client_sock);
 }
 
@@ -32,6 +39,7 @@ void close_proxy(int sig)
     (void)sig; // Cast to void to avoid unused parameter warning
     stop = 0;
     printf("Stopping Server: \n");
+    exit(0);
 }
 
 int parse_http_request(char *request, char *method, char *host, char *path)
