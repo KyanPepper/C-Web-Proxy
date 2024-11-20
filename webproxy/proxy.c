@@ -7,14 +7,24 @@
 
 volatile sig_atomic_t stop = 1;
 
+// Log error message in console
 void error(const char *msg)
 {
-    perror(msg);
+
+    FILE *log_file = fopen("proxy_error.log", "a");
+    if (log_file == NULL)
+    {
+        perror("Error opening log file");
+        return;
+    }
+    fprintf(log_file, "%s\n", msg);
+    fclose(log_file);
 }
-void error_on_client(const char *msg)
+
+void error_on_client(const char *msg, int client_sock)
 {
-    perror(msg);
-    exit(1);
+    error(msg);
+    close(client_sock);
 }
 
 void close_proxy(int sig)
@@ -38,7 +48,7 @@ int parse_http_request(char *request, char *method, char *host, char *path)
     // bad format 401
     if (good != 3)
     {
-        error("Error:PARSE_HTTP_REQUEST parsing request");
+        error("Error: PARSE_HTTP_REQUEST parsing request");
         return -1;
     }
 
@@ -63,7 +73,8 @@ void handle_client(int client_sock)
     int n = read(client_sock, buffer, MAX_REQUEST);
     if (n < 0)
     {
-        error("Error:HANDLE_CLIENT reading from socket");
+        error_on_client("Error:HANDLE_CLIENT reading from socket", client_sock);
+        return;
     }
 
     // Parse the request to get the host and path
@@ -71,7 +82,8 @@ void handle_client(int client_sock)
 
     if (parse_http_request(buffer, method, host, path) < 0)
     {
-        error("Error:HANDLE_CLIENT parsing request");
+        error_on_client("Error:HANDLE_CLIENT parsing request", client_sock);
+        return;
     }
 
     // Send the request to the server and get the response assuming get request

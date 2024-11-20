@@ -14,7 +14,7 @@
 void error(const char *msg);
 
 // On client error, close the client socket, keep the server socket open
-void error_on_client(const char *msg);
+void error_on_client(const char *msg, int client_sock);
 
 // Create Socket and bind to a port and listen for incoming connections
 void proxy(int port);
