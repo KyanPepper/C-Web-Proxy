@@ -1,3 +1,5 @@
 __pycache__
 proxy.dSYM
 proxy
+proxy_error.log
+proxy.log
