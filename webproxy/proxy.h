@@ -13,6 +13,9 @@
 // Log error message in console
 void error(const char *msg);
 
+// On client error, close the client socket, keep the server socket open
+void error_on_client(const char *msg);
+
 // Create Socket and bind to a port and listen for incoming connections
 void proxy(int port);
 

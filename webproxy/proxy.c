@@ -10,6 +10,10 @@ volatile sig_atomic_t stop = 1;
 void error(const char *msg)
 {
     perror(msg);
+}
+void error_on_client(const char *msg)
+{
+    perror(msg);
     exit(1);
 }
 
@@ -22,6 +26,7 @@ void close_proxy(int sig)
 
 int parse_http_request(char *request, char *method, char *host, char *path)
 {
+    printf("Request: %s\n", request);
     // Parse the request to get the host and path
     int good = sscanf(request, "%9s http://%127s[^/]%255s", method, host, path);
     // only GET method is supported
@@ -147,7 +152,6 @@ int send_request(int client_sock, char *host, char *path)
 
 void proxy(int port)
 {
-
     // Register signal handler for closing the proxy server
     signal(SIGINT, close_proxy);
 
@@ -170,25 +174,26 @@ void proxy(int port)
     {
         error("Error:PROXY on binding");
     }
+    printf("Serving on port %d\n", port);
 
     // Listen for incoming connections
     // This marks the socket as a passive socket that will be used to accept incoming connections.
     listen(proxySocket, 5);
 
-    // Accept incoming connections
-    struct sockaddr_in cli_addr;
-    socklen_t clilen = sizeof(cli_addr);
-    int clientSocket = accept(proxySocket, (struct sockaddr *)&cli_addr, &clilen); // control flow blocked here (no async await)
-
-    if (clientSocket < 0)
-    {
-        error("Error:PROXY on accepting connection");
-    }
-
-    printf("Connection accepted\n");
-
     while (stop == 1)
     {
+        // Accept incoming connections
+        struct sockaddr_in cli_addr;
+        socklen_t clilen = sizeof(cli_addr);
+        int clientSocket = accept(proxySocket, (struct sockaddr *)&cli_addr, &clilen);
+
+        if (clientSocket < 0)
+        {
+            error("Error:PROXY on accepting connection");
+        }
+
+        printf("Connection accepted\n");
+
         handle_client(clientSocket);
     }
 
