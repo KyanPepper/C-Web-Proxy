@@ -5,13 +5,16 @@ Basic
 
 
 ## Running Http Server And Tests
-Run Permission Scripts
+Run Permission Scripts 
+    chmod +x ./scripts/startproxy.sh
     chmod +x ./scripts/runserver.sh
     chmod +x ./scripts/runtests.sh
 
-Run Task
+Run Tasks (Or Use The Scripts)
+    "Run Proxy"
     "Run Http Server"
     "Run Tests"
+
 
 
 

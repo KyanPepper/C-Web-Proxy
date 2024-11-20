@@ -152,8 +152,8 @@ void proxy(int port)
     signal(SIGINT, close_proxy);
 
     // Creates a tcp socket (for http)
-    int socket = socket(AF_INET, SOCK_STREAM, 0);
-    if (socket < 0)
+    int proxySocket = socket(AF_INET, SOCK_STREAM, 0);
+    if (proxySocket < 0)
     {
         // If socket creation fails, display an error message and exit
         error("Error:PROXY opening socket");
@@ -166,19 +166,19 @@ void proxy(int port)
     serv_addr.sin_port = htons(port);       // Convert the port to big endian (network byte order)
 
     // Bind socket to address
-    if (bind(socket, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
+    if (bind(proxySocket, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
     {
         error("Error:PROXY on binding");
     }
 
     // Listen for incoming connections
     // This marks the socket as a passive socket that will be used to accept incoming connections.
-    listen(socket, 5);
+    listen(proxySocket, 5);
 
     // Accept incoming connections
     struct sockaddr_in cli_addr;
     socklen_t clilen = sizeof(cli_addr);
-    int clientSocket = accept(socket, (struct sockaddr *)&cli_addr, &clilen); // control flow blocked here (no async await)
+    int clientSocket = accept(proxySocket, (struct sockaddr *)&cli_addr, &clilen); // control flow blocked here (no async await)
 
     if (clientSocket < 0)
     {
@@ -192,6 +192,6 @@ void proxy(int port)
         handle_client(clientSocket);
     }
 
-    close(socket);
+    close(proxySocket);
     exit(0);
 }
