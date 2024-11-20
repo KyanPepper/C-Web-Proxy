@@ -15,6 +15,7 @@ void error(const char *msg)
 
 void close_proxy(int sig)
 {
+    (void)sig; // Cast to void to avoid unused parameter warning
     stop = 0;
     printf("Stopping Server: \n");
 }
@@ -70,8 +71,6 @@ void handle_client(int client_sock)
 
     // Send the request to the server and get the response assuming get request
     send_request(client_sock, host, path);
-
-    send_response(client_sock);
 
     // Close the client socket  (This indicates end of http request (TCP))
     close(client_sock);
@@ -153,8 +152,8 @@ void proxy(int port)
     signal(SIGINT, close_proxy);
 
     // Creates a tcp socket (for http)
-    int sockfd = socket(AF_INET, SOCK_STREAM, 0);
-    if (sockfd < 0)
+    int socket = socket(AF_INET, SOCK_STREAM, 0);
+    if (socket < 0)
     {
         // If socket creation fails, display an error message and exit
         error("Error:PROXY opening socket");
@@ -167,30 +166,32 @@ void proxy(int port)
     serv_addr.sin_port = htons(port);       // Convert the port to big endian (network byte order)
 
     // Bind socket to address
-    if (bind(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
+    if (bind(socket, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
     {
         error("Error:PROXY on binding");
     }
 
     // Listen for incoming connections
     // This marks the socket as a passive socket that will be used to accept incoming connections.
-    listen(sockfd, 5);
+    listen(socket, 5);
 
     // Accept incoming connections
     struct sockaddr_in cli_addr;
     socklen_t clilen = sizeof(cli_addr);
-    int newsockfd = accept(sockfd, (struct sockaddr *)&cli_addr, &clilen); // control flow blocked here (no async await)
+    int clientSocket = accept(socket, (struct sockaddr *)&cli_addr, &clilen); // control flow blocked here (no async await)
 
-    if (newsockfd < 0)
+    if (clientSocket < 0)
     {
         error("Error:PROXY on accepting connection");
     }
 
+    printf("Connection accepted\n");
+
     while (stop == 1)
     {
+        handle_client(clientSocket);
     }
-    // Close the sockets
-    close(newsockfd);
-    close(sockfd);
+
+    close(socket);
     exit(0);
 }

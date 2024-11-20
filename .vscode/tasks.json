@@ -32,6 +32,13 @@
                 "panel": "shared"
             },
             "problemMatcher": []
+        },
+        {
+            "label": "Run Proxy",
+            "type": "shell",
+            "command": "sh",
+            "args": ["-c", "echo Running proxy... && ./scripts/startproxy.sh"],
         }
+
     ]
 }

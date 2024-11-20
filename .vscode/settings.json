@@ -1,6 +1,6 @@
 {
   "editor.formatOnSave": true,
-  "cSpell.words": ["runserver", "runtests"],
+  "cSpell.words": ["runserver", "runtests", "webproxy"],
   "files.associations": {
     "proxy.h": "c"
   }
