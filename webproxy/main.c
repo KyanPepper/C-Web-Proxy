@@ -1,6 +1,5 @@
 #include "proxy.h"
 
-
 int main(int argc, char *argv[])
 {
     // Check usage
@@ -16,6 +15,22 @@ int main(int argc, char *argv[])
     {
         printf("Port number must be between 1024 and 65535\n");
         exit(1);
+    }
+
+    // Wipe the log files
+    FILE *err_log_file = fopen(ERROR_LOG, "w");
+    if (err_log_file == NULL)
+    {
+        perror("Error opening log file");
+        return 1;
+    }
+    fclose(err_log_file);
+
+    FILE *log_file = fopen(LOG_FILE, "w");
+    if (log_file == NULL)
+    {
+        perror("Error opening log file");
+        return 1;
     }
 
     // Start the proxy server

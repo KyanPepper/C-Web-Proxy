@@ -2,13 +2,18 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-
 #include <arpa/inet.h>
 #include <netdb.h>
+
+#define ERROR_LOG "proxy_error.log"
+#define LOG_FILE "proxy.log"
 #define MAX_REQUEST 5012
 #define PATH_LEN 256
 #define HOST_LEN 128
 #define METHOD_LEN 10
+
+// Log requests in file
+void log_action(const char *msg, int id);
 
 // Log error message in console
 void error(const char *msg);

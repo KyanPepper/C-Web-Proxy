@@ -11,13 +11,25 @@ volatile sig_atomic_t stop = 1;
 void error(const char *msg)
 {
 
-    FILE *log_file = fopen("proxy_error.log", "a");
+    FILE *log_file = fopen(ERROR_LOG, "a");
     if (log_file == NULL)
     {
         perror("Error opening log file");
         return;
     }
     fprintf(log_file, "%s\n", msg);
+    fclose(log_file);
+}
+
+void log_action(const char *msg, int socketId)
+{
+    FILE *log_file = fopen(LOG_FILE, "a");
+    if (log_file == NULL)
+    {
+        perror("Error opening log file");
+        return;
+    }
+    fprintf(log_file, "Socket %d %s\n", socketId, msg);
     fclose(log_file);
 }
 
@@ -29,7 +41,7 @@ void error_on_client(const char *msg, int client_sock)
     snprintf(newMessage + strlen(newMessage), newMessageSize - strlen(newMessage),
              " error on client socket %d", client_sock);
 
-    error(msg);
+    error(newMessage);
     write(client_sock, "HTTP/1.0 400 Bad Request\r\n", 25);
     close(client_sock);
 }
@@ -84,7 +96,7 @@ void handle_client(int client_sock)
         error_on_client("Error:HANDLE_CLIENT reading from socket", client_sock);
         return;
     }
-
+    log_action("Request Read", client_sock);
     // Parse the request to get the host and path
     char method[METHOD_LEN], host[HOST_LEN], path[PATH_LEN];
 
@@ -93,9 +105,15 @@ void handle_client(int client_sock)
         error_on_client("Error:HANDLE_CLIENT parsing request", client_sock);
         return;
     }
+    log_action("Request Parsed", client_sock);
 
     // Send the request to the server and get the response assuming get request
-    send_request(client_sock, host, path);
+    if (send_request(client_sock, host, path) < 0)
+    {
+        error_on_client("Error:HANDLE_CLIENT sending request", client_sock);
+        return;
+    }
+    log_action("Content Received", client_sock);
 
     // Close the client socket  (This indicates end of http request (TCP))
     close(client_sock);
@@ -211,6 +229,8 @@ void proxy(int port)
         {
             error("Error:PROXY on accepting connection");
         }
+
+        log_action("Connection accepted", clientSocket);
 
         printf("Connection accepted\n");
 
