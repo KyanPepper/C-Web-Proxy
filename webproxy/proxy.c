@@ -96,7 +96,9 @@ void handle_client(int client_sock)
         error_on_client("Error:HANDLE_CLIENT reading from socket", client_sock);
         return;
     }
-    log_action("Request Read", client_sock);
+
+    log_action(buffer, client_sock);
+
     // Parse the request to get the host and path
     char method[METHOD_LEN], host[HOST_LEN], path[PATH_LEN];
 
