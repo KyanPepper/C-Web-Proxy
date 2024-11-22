@@ -210,7 +210,7 @@ int send_request(int client_sock, char *domain, char *path, char *port)
     struct sockaddr_in serv_addr;
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_port = htons(atoi(port));
-    bcopy((char *)server->h_addr, (char *)&serv_addr.sin_addr.s_addr, server->h_length); // Copy the server's IP address
+    memcpy((char *)server->h_addr, (char *)&serv_addr.sin_addr.s_addr, server->h_length); // Copy the server's IP address
 
     // Connect to the server
     if (connect(server_sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
@@ -289,8 +289,6 @@ void proxy(int port)
         }
 
         log_action("Connection accepted", clientSocket);
-
-        printf("Connection accepted\n");
 
         handle_client(clientSocket);
     }

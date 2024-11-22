@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <netdb.h>
+#include <signal.h>
 
 #define ERROR_LOG "proxy_error.log"
 #define LOG_FILE "proxy.log"
@@ -11,6 +12,26 @@
 #define PATH_LEN 256
 #define HOST_LEN 128
 #define METHOD_LEN 10
+
+// Platform-specific includes for portability
+#ifdef _WIN32
+#include <winsock2.h>
+#include <ws2tcpip.h>
+// Windows-specific setup
+#define close closesocket
+#define h_addr h_addr_list[0]
+#pragma comment(lib, "Ws2_32.lib")
+#elif __APPLE__
+// macOS uses BSD standards, h_addr is already defined
+#include <netinet/in.h>
+#include <sys/select.h>
+#include <sys/time.h>
+#include <sys/types.h>
+#elif __linux__
+// Linux requires defining h_addr explicitly as h_addr_list[0]
+#include <netinet/in.h>
+#define h_addr h_addr_list[0]
+#endif
 
 // Log requests in file
 void log_action(const char *msg, int id);
