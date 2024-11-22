@@ -210,7 +210,7 @@ int send_request(int client_sock, char *domain, char *path, char *port)
     struct sockaddr_in serv_addr;
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_port = htons(atoi(port));
-    memcpy((char *)server->h_addr, (char *)&serv_addr.sin_addr.s_addr, server->h_length); // Copy the server's IP address
+    memcpy((char *)&serv_addr.sin_addr.s_addr, (char *)server->h_addr, server->h_length);
 
     // Connect to the server
     if (connect(server_sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
