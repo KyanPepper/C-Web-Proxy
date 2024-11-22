@@ -30,4 +30,10 @@ def testGetOnLocalServerWithProxy():
     assert response.status_code == 200
     assert response.content == b"abc123"
 
+
+def test_health_check_not_found():
+    response = requests.get(f"{serverURL}/DNE.txt", proxies=proxies)
+    assert response.status_code == 404
+
+
    
