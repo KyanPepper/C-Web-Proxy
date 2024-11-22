@@ -28,10 +28,13 @@ void proxy(int port);
 void close_proxy(int sig);
 
 // parse the request to get the host and path
-int parse_http_request(char *request, char *method, char *host, char *path);
+int parse_http_request(char *domain, size_t domain_size,
+                       char *port, size_t port_size,
+                       char *path, size_t path_size,
+                       const char *buffer);
 
 // Send the request to the server and get the response
-int send_request(int client_sock, char *host, char *path);
+int send_request(int client_sock, char *domain, char *path, char *port);
 
 // Control flow to receive and send data to client
 void handle_client(int client_sock);
