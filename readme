@@ -1,4 +1,14 @@
+C Web Proxy
+A simple, portable web proxy written in C that forwards HTTP requests from clients to a web server and relays the responses back to the clients. This proxy also includes logging functionality to track all incoming requests and responses. It is designed to be portable across Linux, macOS, and Windows.
 
+Features
+Forwards HTTP requests to the intended web server.
+Relays HTTP responses from the server back to the client.
+Logs all HTTP requests and responses, including timestamps and client details.
+Can be extended for use cases like caching or monitoring traffic.
+Supports basic handling of HTTP methods like GET and POST.
+
+Portable across multiple platforms (Linux, macOS, Windows).
 ## Running Http Server And Tests
 Run Permission Scripts 
     chmod +x ./scripts/startproxy.sh
